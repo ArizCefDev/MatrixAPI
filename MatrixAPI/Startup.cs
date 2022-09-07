@@ -2,6 +2,7 @@ using AutoMapper;
 using BusinessLayer.Abstract;
 using BusinessLayer.Concrete;
 using BusinessLayer.Config;
+using BusinessLayer.Container;
 using DataAccessLayer.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,10 +36,10 @@ namespace MatrixAPI
             //Databaseye qosulmaq ucun
             services.AddDbContext<ApplicationDBContext>(optopns =>
             optopns.UseSqlServer(Configuration.GetConnectionString("DataConnection")
-            ));            
+            ));
 
             //Servisleri qeyd etmek ucun
-            services.AddScoped<IUserService, UserService>();
+            services.ContainerDependencies();
 
 
             //DTO-Entity Yolunu gostermek ucun
