@@ -11,7 +11,8 @@ namespace BusinessLayer.Abstract
 {
     public interface IUserService : IBaseService<UserDTO, User, UserDTO>
     {
-        bool Login(UserDTO p);
+        UserDTO Login(UserDTO dto);
+
 
         //IEnumerable<UserDTO> GetFilterID(int id);
         //IEnumerable<UserDTO> GetSearch(string s);

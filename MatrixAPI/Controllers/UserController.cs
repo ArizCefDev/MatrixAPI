@@ -2,6 +2,7 @@
 using DTO.DTOEntity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Linq;
 
 namespace MatrixAPI.Controllers
@@ -21,7 +22,7 @@ namespace MatrixAPI.Controllers
         public IActionResult UserGet()
         {
             var values = _userService.GetAll();
-            return Ok(values.OrderByDescending(x=>x.ID));
+            return Ok(values.OrderByDescending(x => x.ID));
         }
 
         [HttpGet("{id}")]
@@ -55,7 +56,5 @@ namespace MatrixAPI.Controllers
             _userService.Delete(id);
             return Ok();
         }
-
-
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessLayer.Abstract;
+using BusinessLayer.Helper;
 using DataAccessLayer.Context;
 using DataAccessLayer.Entity;
 using DTO.DTOEntity;
@@ -18,9 +19,42 @@ namespace BusinessLayer.Concrete
         {
         }
 
-        public bool Login(UserDTO p)
-        {        
-            return true;
+        public override UserDTO Insert(UserDTO dto)
+        {
+            var result = _dBContext.User.Where(x => x.UserName == dto.UserName);
+
+            if (result.Count() > 0)
+            {
+                throw new Exception("User exists");
+            }
+            dto.Salt = Crypto.GenerateSalt();
+            dto.PasswordHash = Crypto.GenerateSHA256Hash(dto.Password, dto.Salt);
+            return base.Insert(dto);
+        }
+
+        public UserDTO Login(UserDTO dto)
+        {
+            var result = _dBContext.User.Where(x => x.UserName == dto.UserName);
+
+            if (result.Count() == 1)
+            {
+                var user = result.FirstOrDefault();
+                var hash = Crypto.GenerateSHA256Hash(dto.Password, user.Salt);
+
+                if (hash == user.PasswordHash)
+                {
+                    var model = _mapper.Map<User, UserDTO>(result.First());
+                    return model;
+                }
+                else
+                {
+                    throw new Exception("Wrong password");
+                }
+            }
+            else
+            {
+                throw new Exception("User not found");
+            }
         }
 
         //public IEnumerable<UserDTO> GetFilterID(int id)

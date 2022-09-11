@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer.Concrete
 {
-    public class BaseService<RqDTO, T, RsDTO> : IBaseService<RsDTO, T, RqDTO>
+    public abstract class BaseService<RqDTO, T, RsDTO> : IBaseService<RsDTO, T, RqDTO>
         where T : BaseEntity
     {
 
@@ -27,7 +27,7 @@ namespace BusinessLayer.Concrete
             _dbSet = dBContext.Set<T>();
         }
 
-        public int Delete(int id)
+        public virtual int Delete(int id)
         {
             var ent = _dbSet.Find(id);
             _dbSet.Remove(ent);
@@ -35,21 +35,21 @@ namespace BusinessLayer.Concrete
             return ent.ID;
         }
 
-        public IEnumerable<RsDTO> GetAll()
+        public virtual IEnumerable<RsDTO> GetAll()
         {
             var ent = _dbSet.ToList();
             var rsdto = _mapper.Map<IEnumerable<RsDTO>>(ent);
             return rsdto;
         }
 
-        public RsDTO GetById(int id)
+        public virtual RsDTO GetById(int id)
         {
             var ent = _dbSet.Find(id);
             var rsdto = _mapper.Map<RsDTO>(ent);
             return rsdto;
         }
 
-        public RsDTO Insert(RqDTO dto)
+        public virtual RsDTO Insert(RqDTO dto)
         {
             var ent = _mapper.Map<T>(dto);
             ent.CreatedAt = DateTime.Now;
@@ -60,8 +60,8 @@ namespace BusinessLayer.Concrete
             var rsdto = _mapper.Map<RsDTO>(ent);
             return rsdto;
         }
-
-        public void Update(RqDTO dto)
+ 
+        public virtual void Update(RqDTO dto)
         {
             var ent = _mapper.Map<T>(dto);
             ent.UpdateAt = DateTime.Now;
