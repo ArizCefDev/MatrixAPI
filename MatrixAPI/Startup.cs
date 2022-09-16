@@ -4,6 +4,7 @@ using BusinessLayer.Concrete;
 using BusinessLayer.Config;
 using BusinessLayer.Container;
 using DataAccessLayer.Context;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -33,6 +34,28 @@ namespace MatrixAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Cookie
+            services.AddDistributedMemoryCache();
+            services.AddSession();
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+              .AddCookie((opt =>
+                 {
+                     //opt.LoginPath = "/SignIn";
+                     opt.Cookie.HttpOnly = true;
+                     opt.Cookie.Name = "AuthCookie";
+                     opt.Cookie.MaxAge = TimeSpan.FromSeconds(300);
+
+                     opt.Events = new CookieAuthenticationEvents
+                     {
+                         OnRedirectToLogin = x =>
+                      {
+                          x.HttpContext.Response.StatusCode = 401;
+                          return Task.CompletedTask;
+                      }
+                     };
+                 }));
+
             //Databaseye qosulmaq ucun
             services.AddDbContext<ApplicationDBContext>(optopns =>
             optopns.UseSqlServer(Configuration.GetConnectionString("DataConnection")
@@ -70,7 +93,13 @@ namespace MatrixAPI
 
             app.UseRouting();
 
+            //bularida cookie
+            app.UseSession();
+
+            app.UseAuthentication();
+
             app.UseAuthorization();
+            ///
 
             app.UseEndpoints(endpoints =>
             {

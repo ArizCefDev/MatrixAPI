@@ -21,7 +21,7 @@ namespace BusinessLayer.Concrete
 
         public override UserDTO Insert(UserDTO dto)
         {
-            var result = _dBContext.User.Where(x => x.UserName == dto.UserName);
+            var result = _dBContext.User.Where(x => x.UserName.ToLower() == dto.UserName.ToLower());
 
             if (result.Count() > 0)
             {
@@ -34,7 +34,7 @@ namespace BusinessLayer.Concrete
 
         public UserDTO Login(UserDTO dto)
         {
-            var result = _dBContext.User.Where(x => x.UserName == dto.UserName);
+            var result = _dBContext.User.Where(x => x.UserName.ToLower() == dto.UserName.ToLower());
 
             if (result.Count() == 1)
             {
